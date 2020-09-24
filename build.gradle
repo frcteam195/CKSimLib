@@ -1,0 +1,147 @@
+plugins {
+  id 'cpp'
+  id 'java'
+  id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
+  id 'edu.wpi.first.NativeUtils' version '2020.5.2'
+  id 'edu.wpi.first.GradleJni' version '0.10.1'
+  id 'edu.wpi.first.GradleVsCode' version '0.10.0'
+  id 'google-test-test-suite'
+}
+
+allprojects {
+    repositories {
+      mavenCentral()
+    }
+    if (project.hasProperty('releaseMode')) {
+        wpilibRepositories.addAllReleaseRepositories(it)
+    } else {
+        wpilibRepositories.addAllDevelopmentRepositories(it)
+    }
+}
+
+
+apply from: 'config.gradle'
+
+apply from: 'dependencies.gradle'
+
+nativeUtils {
+  exportsConfigs {
+      CKSim {
+      }
+  }
+  privateExportsConfigs {
+    CKSimDriver {
+      exportsFile = project.file("src/main/driver/symbols.txt")
+    }
+  }
+}
+
+// repositories {
+//     libs(PrebuiltLibraries) {
+//         libzmq {
+//             headers.srcDir projectDir.absolutePath + "\\libzmq"
+//             binaries.withType(SharedLibraryBinary) {
+//                 sharedLibraryFile = file( projectDir.absolutePath + "\\libzmq\\libzmq-v142-mt-gd-4_3_2.dll")
+//                 sharedLibraryLinkFile = file( projectDir.absolutePath + "\\libzmq\\libzmq-v142-mt-gd-4_3_2.lib")
+//             }
+//         }
+//     }
+// }
+
+model {
+  repositories {
+      libs(PrebuiltLibraries) {
+        libzmq {
+          headers.srcDir '/libzmq/include'
+          binaries.withType(SharedLibraryBinary) {
+            sharedLibraryFile = file( projectDir.absolutePath + "/libzmq/libzmq-v142-mt-gd-4_3_2.dll")
+            sharedLibraryLinkFile = file( projectDir.absolutePath + "/libzmq/libzmq-v142-mt-gd-4_3_2.lib")
+          }
+        }
+      }
+  }
+
+  components {
+    CKSim(NativeLibrarySpec) {
+      sources {
+        cpp {
+          source {
+            srcDirs 'src/main/native/cpp'
+            include '**/*.cpp'
+          }
+          exportedHeaders {
+            srcDirs 'src/main/native/include'
+          }
+        }
+      }
+      binaries.all {
+        lib library: "CKSimDriver", linkage: 'shared'
+        tasks.withType(CppCompile) {
+          includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include")
+          includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include\\win32")
+        }
+      }
+
+
+      nativeUtils.useRequiredLibrary(it, "wpilibc_shared", "ntcore_shared", "hal_shared", "wpiutil_shared")
+    }
+
+    CKSimDriver(JniNativeLibrarySpec) {
+      enableCheckTask true
+      javaCompileTasks << compileJava
+//      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.roborio)
+//      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.raspbian)
+      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.windowsx64)
+      sources {
+        cpp {
+          source {
+            srcDirs 'src/main/driver/cpp'
+            include '**/*.cpp'
+          }
+          exportedHeaders {
+            srcDirs 'src/main/driver/include'
+          }
+        }
+      }
+      tasks.withType(CppCompile) {
+        includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include")
+        includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include\\win32")
+      }
+      nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
+      binaries.all {
+        lib library: "libzmq", linkage: 'shared'
+        tasks.withType(CppCompile) {
+          includes.from("C:\\Users\\R\\Documents\\repos\\CKSimLibCpp\\libzmq\\include")
+        }
+      }
+    }
+  }
+
+  testSuites {
+    CKSimTest(GoogleTestTestSuiteSpec) {
+      testing $.components.CKSim
+      sources.cpp {
+        source {
+          srcDir 'src/test/cpp'
+          include '**/*.cpp'
+        }
+      }
+
+      binaries.all {
+        lib library: "CKSimDriver", linkage: 'shared'
+      }
+      nativeUtils.useRequiredLibrary(it, "wpilib_executable_shared", "googletest_static")
+    }
+  }
+
+}
+
+// javadoc {
+//   options.addBooleanOption('-no-module-directories', true) 
+// }
+
+apply from: 'publish.gradle'
+
+wrapper {
+  gradleVersion = '6.0'
+}
