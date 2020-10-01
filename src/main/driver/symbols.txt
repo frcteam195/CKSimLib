@@ -1,2 +1,4 @@
 JNI_OnLoad
 JNI_OnUnload
+c_CKSimDriver
+c_CKSimDealloc

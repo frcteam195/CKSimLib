@@ -9,21 +9,21 @@ plugins {
 }
 
 tasks.whenTaskAdded {task ->
-    // if(task.name.contains("linkCKSimDriverDebugSharedLibrary")) {
-    //     task.enabled = false
-    // }
-    // if(task.name.contains("checkCKSimDriverDebugSharedLibraryJniSymbols")) {
-    //     task.enabled = false
-    // }
-    // if(task.name.contains("linkCKSimDebugSharedLibrary")) {
-    //     task.enabled = false
-    // }
-    // if(task.name.contains("linkCKSimTestDebugGoogleTestExe")) {
-    //     task.enabled = false
-    // }
-    // if(task.name.contains("runCKSimTestDebugGoogleTestExe")) {
-    //     task.enabled = false
-    // }
+    if(task.name.contains("linkCKSimDriverDebugSharedLibrary")) {
+        task.enabled = false
+    }
+    if(task.name.contains("checkCKSimDriverDebugSharedLibraryJniSymbols")) {
+        task.enabled = false
+    }
+    if(task.name.contains("linkCKSimDebugSharedLibrary")) {
+        task.enabled = false
+    }
+    if(task.name.contains("linkCKSimTestDebugGoogleTestExe")) {
+        task.enabled = false
+    }
+    if(task.name.contains("runCKSimTestDebugGoogleTestExe")) {
+        task.enabled = false
+    }
 }
 
 
@@ -65,13 +65,31 @@ model {
         //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
         // }
         binaries.withType(StaticLibraryBinary) {
-          staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+          staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-md-s-4_3_3.lib")
         }
       }
       libprotobuf {
         headers.srcDir '/lib/protobuf/include'
         binaries.withType(StaticLibraryBinary) {
           staticLibraryFile = file( projectDir.absolutePath + "/lib/protobuf/libprotobuf-3.13.0.lib")
+        }
+      }
+      WS2_32 {
+        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
+        binaries.withType(StaticLibraryBinary) {
+            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/WS2_32.Lib')
+        }
+      }
+      AdvAPI32 {
+        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
+        binaries.withType(StaticLibraryBinary) {
+            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/AdvAPI32.Lib')
+        }
+      }
+      iphlpapi {
+        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
+        binaries.withType(StaticLibraryBinary) {
+            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/iphlpapi.lib')
         }
       }
     }
@@ -127,11 +145,15 @@ model {
       binaries.all {
         lib library: "libzmq", linkage: 'static'
         lib library: "libprotobuf", linkage: 'static'
+        lib library: "WS2_32", linkage: 'static'
+        lib library: "AdvAPI32", linkage: 'static'
+        lib library: "iphlpapi", linkage: 'static'
         tasks.withType(CppCompile) {
-          cppCompiler.args << '/MT'
+          // cppCompiler.args << '/MT'
         }
-        linker.args << '-lzmq'
-        linker.args << '-lprotobuf'
+        // linker.args << '-lzmq'
+        // linker.args << '-lws2_32'
+        // project.logger.lifecycle("${linker.args}");
       }
     }
   }
