@@ -74,24 +74,6 @@ model {
           staticLibraryFile = file( projectDir.absolutePath + "/lib/protobuf/libprotobuf-3.13.0.lib")
         }
       }
-      WS2_32 {
-        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
-        binaries.withType(StaticLibraryBinary) {
-            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/WS2_32.Lib')
-        }
-      }
-      AdvAPI32 {
-        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
-        binaries.withType(StaticLibraryBinary) {
-            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/AdvAPI32.Lib')
-        }
-      }
-      iphlpapi {
-        headers.srcDir 'C:/Program Files (x86)/Windows Kits/10/Include/10.0.18362.0/um'
-        binaries.withType(StaticLibraryBinary) {
-            staticLibraryFile = file('C:/Program Files (x86)/Windows Kits/10/Lib/10.0.18362.0/um/x64/iphlpapi.lib')
-        }
-      }
     }
   }
 
@@ -142,17 +124,15 @@ model {
         includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include\\win32")
       }
       nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
-      binaries.all {
+      binaries.all {binary ->
         lib library: "libzmq", linkage: 'static'
         lib library: "libprotobuf", linkage: 'static'
-        lib library: "WS2_32", linkage: 'static'
-        lib library: "AdvAPI32", linkage: 'static'
-        lib library: "iphlpapi", linkage: 'static'
         tasks.withType(CppCompile) {
           // cppCompiler.args << '/MT'
         }
-        // linker.args << '-lzmq'
-        // linker.args << '-lws2_32'
+        linker.args << "WS2_32.lib"
+        linker.args << "Advapi32.lib"
+        linker.args << "iphlpapi.lib"
         // project.logger.lifecycle("${linker.args}");
       }
     }
