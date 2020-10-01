@@ -36,26 +36,17 @@ nativeUtils {
   }
 }
 
-// repositories {
-//     libs(PrebuiltLibraries) {
-//         libzmq {
-//             headers.srcDir projectDir.absolutePath + "\\libzmq"
-//             binaries.withType(SharedLibraryBinary) {
-//                 sharedLibraryFile = file( projectDir.absolutePath + "\\libzmq\\libzmq-v142-mt-gd-4_3_2.dll")
-//                 sharedLibraryLinkFile = file( projectDir.absolutePath + "\\libzmq\\libzmq-v142-mt-gd-4_3_2.lib")
-//             }
-//         }
-//     }
-// }
-
 model {
   repositories {
       libs(PrebuiltLibraries) {
         libzmq {
-          headers.srcDir '/libzmq/include'
-          binaries.withType(SharedLibraryBinary) {
-            sharedLibraryFile = file( projectDir.absolutePath + "/libzmq/libzmq-v142-mt-gd-4_3_2.dll")
-            sharedLibraryLinkFile = file( projectDir.absolutePath + "/libzmq/libzmq-v142-mt-gd-4_3_2.lib")
+          headers.srcDir '/lib/libzmq/include'
+          // binaries.withType(SharedLibraryBinary) {
+          //   sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+          //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+          // }
+          binaries.withType(StaticLibraryBinary) {
+            staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
           }
         }
       }
@@ -109,10 +100,11 @@ model {
       }
       nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
       binaries.all {
-        lib library: "libzmq", linkage: 'shared'
+        lib library: "libzmq", linkage: 'static'
         tasks.withType(CppCompile) {
-          includes.from("C:\\Users\\R\\Documents\\repos\\CKSimLibCpp\\libzmq\\include")
+          includes.from("C:\\Users\\R\\Documents\\repos\\CKSimLibCpp\\lib\\libzmq\\include")
         }
+        linker.args '-lzmq'
       }
     }
   }
