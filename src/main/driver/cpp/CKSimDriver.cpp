@@ -13,11 +13,13 @@ namespace ck {
     int ZMQSubInit() {
         contextSubscriber = zmq_ctx_new();
         subscriberSocket = zmq_socket(contextSubscriber, ZMQ_SUB);
-        zmq_setsockopt(subscriberSocket, ZMQ_SUBSCRIBE, "", 0);
         std::cout << "Sub Socket Init: " << strerror(errno) << std::endl;
+        errno = 0;
         int retVal = zmq_connect(subscriberSocket, BuildConnStr(ZMQ_SERVER_IP, ZMQ_PUBSUB_SERVER_PORT).c_str());
         std::cout << BuildConnStr(ZMQ_SERVER_IP, ZMQ_PUBSUB_SERVER_PORT).c_str() << std::endl;
         std::cout << "Sub Connect: " << strerror(errno) << std::endl;
+        zmq_setsockopt(subscriberSocket, ZMQ_SUBSCRIBE, "", 0);
+        errno = 0;
         std::cout << "Retval: " << retVal << std::endl;
         return retVal;
     }
