@@ -13,8 +13,8 @@ socket = context.socket(zmq.PUB)
 socket.bind("tcp://*:%s" % port)
 
 while True:
-    topic = random.randrange(9999,10005)
-    messagedata = random.randrange(1,215) - 80
-    print("%d %d" % (topic, messagedata))
-    socket.send_string("%d %d" % (topic, messagedata))
+    topic = 10000
+    messagedata = "test msg" + str(random.randrange(1,215) - 80)
+    print("%d %s" % (topic, messagedata))
+    socket.send(("%d %s" % (topic, messagedata)).encode('ascii'), 0)
     time.sleep(1)

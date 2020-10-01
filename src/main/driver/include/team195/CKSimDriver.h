@@ -16,13 +16,14 @@
 #include <errno.h>
 
 namespace ck {
-    extern std::string ZMQ_SERVER_IP;
-    extern std::string ZMQ_REQREP_SERVER_PORT;
-    extern std::string ZMQ_PUBSUB_SERVER_PORT;
-
+    extern const std::string ZMQ_SERVER_IP;
+    extern const std::string ZMQ_REQREP_SERVER_PORT;
+    extern const std::string ZMQ_PUBSUB_SERVER_PORT;
+    extern const std::string TOPIC;
 
     int ZMQSubInit();
     int ZMQReqInit();
+    int ZMQSubRecv();
     void CKSimDealloc();
     std::string BuildConnStr(std::string ipAddr, std::string port);
 }
@@ -30,4 +31,5 @@ namespace ck {
 extern "C" {
     int c_CKSimDriver();
     void c_CKSimDealloc();
+    int c_ZMQSubRecv();
 }  // extern "C"
