@@ -8,6 +8,25 @@ plugins {
   id 'google-test-test-suite'
 }
 
+tasks.whenTaskAdded {task ->
+    // if(task.name.contains("linkCKSimDriverDebugSharedLibrary")) {
+    //     task.enabled = false
+    // }
+    // if(task.name.contains("checkCKSimDriverDebugSharedLibraryJniSymbols")) {
+    //     task.enabled = false
+    // }
+    // if(task.name.contains("linkCKSimDebugSharedLibrary")) {
+    //     task.enabled = false
+    // }
+    // if(task.name.contains("linkCKSimTestDebugGoogleTestExe")) {
+    //     task.enabled = false
+    // }
+    // if(task.name.contains("runCKSimTestDebugGoogleTestExe")) {
+    //     task.enabled = false
+    // }
+}
+
+
 allprojects {
     repositories {
       mavenCentral()
@@ -38,18 +57,24 @@ nativeUtils {
 
 model {
   repositories {
-      libs(PrebuiltLibraries) {
-        libzmq {
-          headers.srcDir '/lib/libzmq/include'
-          // binaries.withType(SharedLibraryBinary) {
-          //   sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
-          //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
-          // }
-          binaries.withType(StaticLibraryBinary) {
-            staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
-          }
+    libs(PrebuiltLibraries) {
+      libzmq {
+        headers.srcDir '/lib/libzmq/include'
+        // binaries.withType(SharedLibraryBinary) {
+        //   sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+        //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+        // }
+        binaries.withType(StaticLibraryBinary) {
+          staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
         }
       }
+      libprotobuf {
+        headers.srcDir '/lib/protobuf/include'
+        binaries.withType(StaticLibraryBinary) {
+          staticLibraryFile = file( projectDir.absolutePath + "/lib/protobuf/libprotobuf-3.13.0.lib")
+        }
+      }
+    }
   }
 
   components {
@@ -87,10 +112,10 @@ model {
         cpp {
           source {
             srcDirs 'src/main/driver/cpp'
-            include '**/*.cpp'
+            include '**/*.cpp', '**/*.cc'
           }
           exportedHeaders {
-            srcDirs 'src/main/driver/include'
+            srcDirs 'src/main/driver/include', 'src/main/driver/include/protobuf', 'lib/libzmq/include', 'lib/protobuf/include'
           }
         }
       }
@@ -101,10 +126,12 @@ model {
       nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
       binaries.all {
         lib library: "libzmq", linkage: 'static'
+        lib library: "libprotobuf", linkage: 'static'
         tasks.withType(CppCompile) {
-          includes.from("C:\\Users\\R\\Documents\\repos\\CKSimLibCpp\\lib\\libzmq\\include")
+          cppCompiler.args << '/MT'
         }
-        linker.args '-lzmq'
+        linker.args << '-lzmq'
+        linker.args << '-lprotobuf'
       }
     }
   }
