@@ -1,40 +1,40 @@
 plugins {
-  id 'cpp'
-  id 'java'
-  id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
-  id 'edu.wpi.first.NativeUtils' version '2020.5.2'
-  id 'edu.wpi.first.GradleJni' version '0.10.1'
-  id 'edu.wpi.first.GradleVsCode' version '0.10.0'
-  id 'google-test-test-suite'
+    id 'cpp'
+    id 'java'
+    id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
+    id 'edu.wpi.first.NativeUtils' version '2020.5.2'
+    id 'edu.wpi.first.GradleJni' version '0.10.1'
+    id 'edu.wpi.first.GradleVsCode' version '0.10.0'
+    id 'google-test-test-suite'
 }
 
 tasks.whenTaskAdded {task ->
     if(task.name.contains("linkCKSimDriverDebugSharedLibrary")) {
-        task.enabled = false
+            task.enabled = false
     }
     if(task.name.contains("checkCKSimDriverDebugSharedLibraryJniSymbols")) {
-        task.enabled = false
+            task.enabled = false
     }
     if(task.name.contains("linkCKSimDebugSharedLibrary")) {
-        task.enabled = false
+            task.enabled = false
     }
     if(task.name.contains("linkCKSimTestDebugGoogleTestExe")) {
-        task.enabled = false
+            task.enabled = false
     }
     if(task.name.contains("runCKSimTestDebugGoogleTestExe")) {
-        task.enabled = false
+            task.enabled = false
     }
 }
 
 
 allprojects {
     repositories {
-      mavenCentral()
+        mavenCentral()
     }
     if (project.hasProperty('releaseMode')) {
-        wpilibRepositories.addAllReleaseRepositories(it)
+            wpilibRepositories.addAllReleaseRepositories(it)
     } else {
-        wpilibRepositories.addAllDevelopmentRepositories(it)
+            wpilibRepositories.addAllDevelopmentRepositories(it)
     }
 }
 
@@ -44,116 +44,116 @@ apply from: 'config.gradle'
 apply from: 'dependencies.gradle'
 
 nativeUtils {
-  exportsConfigs {
-      CKSim {
-      }
-  }
-  privateExportsConfigs {
-    CKSimDriver {
-      exportsFile = project.file("src/main/driver/symbols.txt")
+    exportsConfigs {
+        CKSim {
+        }
     }
-  }
+    privateExportsConfigs {
+        CKSimDriver {
+            exportsFile = project.file("src/main/driver/symbols.txt")
+        }
+    }
 }
 
 model {
-  repositories {
-    libs(PrebuiltLibraries) {
-      libzmq {
-        headers.srcDir '/lib/libzmq/include'
-        // binaries.withType(SharedLibraryBinary) {
-        //   sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
-        //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
-        // }
-        binaries.withType(StaticLibraryBinary) {
-          staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-md-s-4_3_3.lib")
+    repositories {
+        libs(PrebuiltLibraries) {
+            libzmq {
+                headers.srcDir '/lib/libzmq/include'
+                // binaries.withType(SharedLibraryBinary) {
+                //   sharedLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+                //   sharedLibraryLinkFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-mt-s-4_3_2.lib")
+                // }
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file( projectDir.absolutePath + "/lib/libzmq/libzmq-v142-md-s-4_3_3.lib")
+                }
+            }
+            libprotobuf {
+                headers.srcDir '/lib/protobuf/include'
+                binaries.withType(StaticLibraryBinary) {
+                    staticLibraryFile = file( projectDir.absolutePath + "/lib/protobuf/libprotobuf-3.13.0.lib")
+                }
+            }
         }
-      }
-      libprotobuf {
-        headers.srcDir '/lib/protobuf/include'
-        binaries.withType(StaticLibraryBinary) {
-          staticLibraryFile = file( projectDir.absolutePath + "/lib/protobuf/libprotobuf-3.13.0.lib")
-        }
-      }
-    }
-  }
-
-  components {
-    CKSim(NativeLibrarySpec) {
-      sources {
-        cpp {
-          source {
-            srcDirs 'src/main/native/cpp'
-            include '**/*.cpp'
-          }
-          exportedHeaders {
-            srcDirs 'src/main/native/include'
-          }
-        }
-      }
-      binaries.all {
-        lib library: "CKSimDriver", linkage: 'shared'
-        tasks.withType(CppCompile) {
-          includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include")
-          includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include\\win32")
-        }
-      }
-
-
-      nativeUtils.useRequiredLibrary(it, "wpilibc_shared", "ntcore_shared", "hal_shared", "wpiutil_shared")
     }
 
-    CKSimDriver(JniNativeLibrarySpec) {
-      enableCheckTask true
-      javaCompileTasks << compileJava
+    components {
+        CKSim(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDirs 'src/main/native/cpp'
+                        include '**/*.cpp'
+                    }
+                    exportedHeaders {
+                        srcDirs 'src/main/native/include'
+                    }
+                }
+            }
+            binaries.all {
+                def javaHome = org.gradle.internal.jvm.Jvm.current().javaHome.absolutePath
+                cppCompiler.args << "-I${javaHome}/include"
+                cppCompiler.args << "-I${javaHome}/include/win32"
+
+                lib library: "CKSimDriver", linkage: 'shared'
+            }
+
+
+            nativeUtils.useRequiredLibrary(it, "wpilibc_shared", "ntcore_shared", "hal_shared", "wpiutil_shared")
+        }
+
+        CKSimDriver(JniNativeLibrarySpec) {
+            enableCheckTask true
+            javaCompileTasks << compileJava
 //      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.roborio)
 //      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.raspbian)
-      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.windowsx64)
-      sources {
-        cpp {
-          source {
-            srcDirs 'src/main/driver/cpp'
-            include '**/*.cpp', '**/*.cc'
-          }
-          exportedHeaders {
-            srcDirs 'src/main/driver/include', 'src/main/driver/include/protobuf', 'lib/libzmq/include', 'lib/protobuf/include'
-          }
-        }
-      }
-      tasks.withType(CppCompile) {
-        includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include")
-        includes.from("C:\\Program Files\\Java\\jdk-11.0.8\\include\\win32")
-      }
-      nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
-      binaries.all {binary ->
-        lib library: "libzmq", linkage: 'static'
-        lib library: "libprotobuf", linkage: 'static'
-        tasks.withType(CppCompile) {
-          // cppCompiler.args << '/MT'
-        }
-        linker.args << "WS2_32.lib"
-        linker.args << "Advapi32.lib"
-        linker.args << "iphlpapi.lib"
-        // project.logger.lifecycle("${linker.args}");
-      }
-    }
-  }
+            jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.windowsx64)
+            sources {
+                cpp {
+                    source {
+                        srcDirs 'src/main/driver/cpp'
+                        include '**/*.cpp', '**/*.cc'
+                    }
 
-  testSuites {
-    CKSimTest(GoogleTestTestSuiteSpec) {
-      testing $.components.CKSim
-      sources.cpp {
-        source {
-          srcDir 'src/test/cpp'
-          include '**/*.cpp'
-        }
-      }
+                    lib library: "libzmq", linkage: 'static'
+                    lib library: "libprotobuf", linkage: 'static'
 
-      binaries.all {
-        lib library: "CKSimDriver", linkage: 'shared'
-      }
-      nativeUtils.useRequiredLibrary(it, "wpilib_executable_shared", "googletest_static")
+                    binaries.all {
+                        def javaHome = org.gradle.internal.jvm.Jvm.current().javaHome.absolutePath
+                        cppCompiler.args << "-I${javaHome}/include"
+                        cppCompiler.args << "-I${javaHome}/include/win32"
+                        // cppCompiler.args << '/MT'
+
+                        linker.args << "WS2_32.lib"
+                        linker.args << "Advapi32.lib"
+                        linker.args << "iphlpapi.lib"
+                    }
+                    exportedHeaders {
+                        srcDirs 'src/main/driver/include', 'src/main/driver/include/protobuf', 'lib/libzmq/include', 'lib/protobuf/include'
+                        exclude "**/*.cpp", "**/*.cc"
+                    }
+                }
+            }
+            nativeUtils.useRequiredLibrary(it, "hal_shared", "wpiutil_shared")
+        }
     }
-  }
+
+    testSuites {
+        CKSimTest(GoogleTestTestSuiteSpec) {
+            testing $.components.CKSim
+            sources.cpp {
+                source {
+                    srcDir 'src/test/cpp'
+                    include '**/*.cpp'
+                }
+            }
+
+            binaries.all {
+                lib library: "CKSimDriver", linkage: 'shared'
+            }
+            nativeUtils.useRequiredLibrary(it, "wpilib_executable_shared", "googletest_static")
+        }
+    }
 
 }
 
@@ -164,5 +164,5 @@ model {
 apply from: 'publish.gradle'
 
 wrapper {
-  gradleVersion = '6.0'
+    gradleVersion = '6.0'
 }
