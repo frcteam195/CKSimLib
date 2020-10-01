@@ -34,15 +34,10 @@ namespace ck
     {
         contextRequester = zmq_ctx_new();
         requesterSocket = zmq_socket(contextRequester, ZMQ_REQ);
-        std::cout << "Req Socket Init: " << strerror(errno) << std::endl;
-        int retVal = zmq_connect(requesterSocket, BuildConnStr(ZMQ_SERVER_IP, ZMQ_REQREP_SERVER_PORT).c_str());
-        std::cout << BuildConnStr(ZMQ_SERVER_IP, ZMQ_REQREP_SERVER_PORT).c_str() << std::endl;
-        std::cout << "Req Connect: " << strerror(errno) << std::endl;
-        std::cout << "Retval: " << retVal << std::endl;
-        return retVal;
+        return zmq_connect(requesterSocket, BuildConnStr(ZMQ_SERVER_IP, ZMQ_REQREP_SERVER_PORT).c_str());
     }
 
-    int ZMQSubRecv()
+    int ZMQSubRecvTest()
     {
         char buf[1000] = "";
         zmq_msg_t in_msg;
@@ -83,9 +78,7 @@ extern "C"
 {
     int c_CKSimDriver()
     {
-        int retVal = ck::ZMQSubInit();
-        //retVal |= ck::ZMQReqInit();
-        return retVal;
+        return ck::ZMQSubInit() | ck::ZMQReqInit();
     }
 
     void c_CKSimDealloc()
@@ -93,8 +86,8 @@ extern "C"
         ck::CKSimDealloc();
     }
 
-    int c_ZMQSubRecv()
+    int c_ZMQSubRecvTest()
     {
-        return ck::ZMQSubRecv();
+        return ck::ZMQSubRecvTest();
     }
 } //extern "C"

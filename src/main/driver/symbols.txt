@@ -2,4 +2,4 @@ JNI_OnLoad
 JNI_OnUnload
 c_CKSimDriver
 c_CKSimDealloc
-c_ZMQSubRecv
+c_ZMQSubRecvTest

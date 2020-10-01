@@ -105,8 +105,8 @@ model {
         CKSimDriver(JniNativeLibrarySpec) {
             enableCheckTask true
             javaCompileTasks << compileJava
-//      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.roborio)
-//      jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.raspbian)
+            // jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.roborio)
+            // jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.raspbian)
             jniCrossCompileOptions << JniCrossCompileOptions(nativeUtils.wpi.platforms.windowsx64)
             sources {
                 cpp {

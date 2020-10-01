@@ -23,7 +23,7 @@ namespace ck {
 
     int ZMQSubInit();
     int ZMQReqInit();
-    int ZMQSubRecv();
+    int ZMQSubRecvTest();
     void CKSimDealloc();
     std::string BuildConnStr(std::string ipAddr, std::string port);
 }
@@ -31,5 +31,5 @@ namespace ck {
 extern "C" {
     int c_CKSimDriver();
     void c_CKSimDealloc();
-    int c_ZMQSubRecv();
+    int c_ZMQSubRecvTest();
 }  // extern "C"
