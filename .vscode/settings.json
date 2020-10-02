@@ -64,5 +64,10 @@
         "xtr1common": "cpp",
         "xtree": "cpp",
         "xutility": "cpp"
-    }
+    },
+    "java.format.settings.url": "",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "C_Cpp.vcFormat.indent.caseContentsWhenBlock": true,
+    "C_Cpp.vcFormat.indent.caseLabels": true
 }
