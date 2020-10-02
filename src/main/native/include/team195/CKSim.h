@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Singleton.h"
+#include "CKSingleton.h"
 
 namespace team195
 {
-    class CKSim : public Singleton<CKSim>
+    class CKSim : public CKSingleton<CKSim>
     {
-        friend Singleton;
+        friend CKSingleton;
 
     public:
         static constexpr int MAX_NUM_MOTORS = 64;
