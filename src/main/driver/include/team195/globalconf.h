@@ -7,7 +7,8 @@
 #define MAX_NUM_GYRO 64
 
 
-constexpr int DATA_BUF_BYTES = 1024;
+constexpr int DATA_BUF_BYTES = 4096;
+constexpr int DATA_BUF_BYTES_SMALL = 128;
 
 namespace ck
 {

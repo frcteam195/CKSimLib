@@ -193,15 +193,15 @@ namespace ck
             HAL_NotifierHandle m_setNotifier = HAL_InitializeNotifier(&status);
             uint64_t currTime;
             uint64_t startTime = HAL_GetFPGATime(&status);
-            char bufRecvArr[128];
-            char bufSendArr[4096];
+            char bufRecvArr[DATA_BUF_BYTES_SMALL];
+            char bufSendArr[DATA_BUF_BYTES];
             memset(bufRecvArr, 0, sizeof(bufRecvArr));
             memset(bufSendArr, 0, sizeof(bufSendArr));
             size_t dataSize = 0;
             while (m_active)
             {
                 std::unique_lock<wpi::mutex> lock(controlMsgMutex);
-                if (!controlMessage.SerializeToArray(bufSendArr, sizeof(bufSendArr)))
+                if (!controlMessage.SerializeToArray(bufSendArr, DATA_BUF_BYTES))
                 {
                     continue;
                 }
@@ -209,7 +209,7 @@ namespace ck
                 lock.unlock();
 
                 zmq_send(requesterSocket, bufSendArr, dataSize, ZMQ_NULL);
-                zmq_recv(requesterSocket, bufRecvArr, sizeof(bufRecvArr), ZMQ_NULL);
+                zmq_recv(requesterSocket, bufRecvArr, DATA_BUF_BYTES_SMALL, ZMQ_NULL);
                 currTime = HAL_GetFPGATime(&status);
                 HAL_UpdateNotifierAlarm(m_setNotifier, (uint64_t)(currTime + (kThreadRate - (currTime - startTime))), &status);
                 HAL_WaitForNotifierAlarm(m_setNotifier, &status);
@@ -229,12 +229,12 @@ namespace ck
     private:
         void Main() override
         {
-            char bufRecvArr[4096];
+            char bufRecvArr[DATA_BUF_BYTES];
             memset(bufRecvArr, 0, sizeof(bufRecvArr));
             while (m_active)
             {
                 int dataSize = 0;
-                if ((dataSize = zmq_recv(subscriberSocket, bufRecvArr, sizeof(bufRecvArr), ZMQ_NULL)) > 0)
+                if ((dataSize = zmq_recv(subscriberSocket, bufRecvArr, DATA_BUF_BYTES, ZMQ_NULL)) > 0)
                 {
                     StatusMessage tmpStatusMessage;
                     if (tmpStatusMessage.ParseFromArray(bufRecvArr, dataSize))
@@ -306,5 +306,38 @@ extern "C"
     {
         std::lock_guard<wpi::mutex> lock(driverMutex);
         return ck::ZMQSubRecvTest();
+    }
+
+    float c_GetMotor(int id)
+    {
+        return ck::GetMotor(id);
+    }
+    void c_SetMotor(int id, float val)
+    {
+        ck::SetMotor(id, val);
+    }
+    float c_GetEncoder(int id)
+    {
+        return ck::GetEncoder(id);
+    }
+    void c_SetEncoder(int id, float val)
+    {
+        ck::SetEncoder(id, val);
+    }
+    float c_GetAccelerometer(int id)
+    {
+        return ck::GetAccelerometer(id);
+    }
+    void c_SetAccelerometer(int id, float val)
+    {
+        ck::SetAccelerometer(id, val);
+    }
+    float c_GetGyro(int id)
+    {
+        return ck::GetGyro(id);
+    }
+    void c_SetGyro(int id, float val)
+    {
+        ck::SetGyro(id, val);
     }
 } //extern "C"

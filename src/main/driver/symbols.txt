@@ -3,3 +3,11 @@ JNI_OnUnload
 c_CKSimDriver
 c_CKSimDealloc
 c_ZMQSubRecvTest
+c_GetMotor
+c_SetMotor
+c_GetEncoder
+c_SetEncoder
+c_GetAccelerometer
+c_SetAccelerometer
+c_GetGyro
+c_SetGyro
