@@ -6,7 +6,17 @@ plugins {
     id 'edu.wpi.first.GradleJni' version '0.10.1'
     id 'edu.wpi.first.GradleVsCode' version '0.10.0'
     id 'google-test-test-suite'
+    id "com.dorongold.task-tree" version "1.5"
 }
+
+task protoGenTask(type:Exec) {
+    logger.lifecycle("Task running!")
+    workingDir './scripts'
+    commandLine 'cd'
+    commandLine 'cmd', '/c', 'make_external.cmd'
+}
+
+build.dependsOn tasks.protoGenTask
 
 tasks.whenTaskAdded {task ->
     if(task.name.contains("linkCKSimDriverDebugSharedLibrary")) {

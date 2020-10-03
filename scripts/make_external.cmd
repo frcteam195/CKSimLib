@@ -1,6 +1,6 @@
 @echo off
-set "rootDir=%cd%"
-cd src\main\driver\include
+set "rootDir=%cd%\..\"
+cd "%rootDir%\src\main\driver\include"
 rmdir /S /Q protobuf
 mkdir protobuf
 cd "%rootDir%\src\main\driver\cpp"
