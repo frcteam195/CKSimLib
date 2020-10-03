@@ -47,6 +47,7 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_StatusMessage_2eproto::offsets
   PROTOBUF_FIELD_OFFSET(::StatusMessage, encoders_),
   PROTOBUF_FIELD_OFFSET(::StatusMessage, accelerometers_),
   PROTOBUF_FIELD_OFFSET(::StatusMessage, gyroscopes_),
+  PROTOBUF_FIELD_OFFSET(::StatusMessage, advanced_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::StatusMessage)},
@@ -58,10 +59,11 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
 
 const char descriptor_table_protodef_StatusMessage_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\023StatusMessage.proto\032\022ValueMessage.prot"
-  "o\"z\n\rStatusMessage\022\037\n\010Encoders\030\001 \003(\0132\r.V"
-  "alueMessage\022%\n\016Accelerometers\030\002 \003(\0132\r.Va"
-  "lueMessage\022!\n\nGyroscopes\030\003 \003(\0132\r.ValueMe"
-  "ssageb\006proto3"
+  "o\"\233\001\n\rStatusMessage\022\037\n\010Encoders\030\001 \003(\0132\r."
+  "ValueMessage\022%\n\016Accelerometers\030\002 \003(\0132\r.V"
+  "alueMessage\022!\n\nGyroscopes\030\003 \003(\0132\r.ValueM"
+  "essage\022\037\n\010Advanced\030\004 \003(\0132\r.ValueMessageb"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_StatusMessage_2eproto_deps[1] = {
   &::descriptor_table_ValueMessage_2eproto,
@@ -71,7 +73,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_Sta
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_StatusMessage_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_StatusMessage_2eproto = {
-  false, false, descriptor_table_protodef_StatusMessage_2eproto, "StatusMessage.proto", 173,
+  false, false, descriptor_table_protodef_StatusMessage_2eproto, "StatusMessage.proto", 207,
   &descriptor_table_StatusMessage_2eproto_once, descriptor_table_StatusMessage_2eproto_sccs, descriptor_table_StatusMessage_2eproto_deps, 1, 1,
   schemas, file_default_instances, TableStruct_StatusMessage_2eproto::offsets,
   file_level_metadata_StatusMessage_2eproto, 1, file_level_enum_descriptors_StatusMessage_2eproto, file_level_service_descriptors_StatusMessage_2eproto,
@@ -97,11 +99,15 @@ void StatusMessage::clear_accelerometers() {
 void StatusMessage::clear_gyroscopes() {
   gyroscopes_.Clear();
 }
+void StatusMessage::clear_advanced() {
+  advanced_.Clear();
+}
 StatusMessage::StatusMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena),
   encoders_(arena),
   accelerometers_(arena),
-  gyroscopes_(arena) {
+  gyroscopes_(arena),
+  advanced_(arena) {
   SharedCtor();
   RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:StatusMessage)
@@ -110,7 +116,8 @@ StatusMessage::StatusMessage(const StatusMessage& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       encoders_(from.encoders_),
       accelerometers_(from.accelerometers_),
-      gyroscopes_(from.gyroscopes_) {
+      gyroscopes_(from.gyroscopes_),
+      advanced_(from.advanced_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:StatusMessage)
 }
@@ -153,6 +160,7 @@ void StatusMessage::Clear() {
   encoders_.Clear();
   accelerometers_.Clear();
   gyroscopes_.Clear();
+  advanced_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -198,6 +206,18 @@ const char* StatusMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else goto handle_unusual;
+        continue;
+      // repeated .ValueMessage Advanced = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(_internal_add_advanced(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<34>(ptr));
         } else goto handle_unusual;
         continue;
       default: {
@@ -252,6 +272,14 @@ failure:
       InternalWriteMessage(3, this->_internal_gyroscopes(i), target, stream);
   }
 
+  // repeated .ValueMessage Advanced = 4;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_advanced_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(4, this->_internal_advanced(i), target, stream);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -285,6 +313,13 @@ size_t StatusMessage::ByteSizeLong() const {
   // repeated .ValueMessage Gyroscopes = 3;
   total_size += 1UL * this->_internal_gyroscopes_size();
   for (const auto& msg : this->gyroscopes_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  }
+
+  // repeated .ValueMessage Advanced = 4;
+  total_size += 1UL * this->_internal_advanced_size();
+  for (const auto& msg : this->advanced_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
@@ -323,6 +358,7 @@ void StatusMessage::MergeFrom(const StatusMessage& from) {
   encoders_.MergeFrom(from.encoders_);
   accelerometers_.MergeFrom(from.accelerometers_);
   gyroscopes_.MergeFrom(from.gyroscopes_);
+  advanced_.MergeFrom(from.advanced_);
 }
 
 void StatusMessage::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
@@ -349,6 +385,7 @@ void StatusMessage::InternalSwap(StatusMessage* other) {
   encoders_.InternalSwap(&other->encoders_);
   accelerometers_.InternalSwap(&other->accelerometers_);
   gyroscopes_.InternalSwap(&other->gyroscopes_);
+  advanced_.InternalSwap(&other->advanced_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StatusMessage::GetMetadata() const {

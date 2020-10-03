@@ -180,6 +180,7 @@ class StatusMessage PROTOBUF_FINAL :
     kEncodersFieldNumber = 1,
     kAccelerometersFieldNumber = 2,
     kGyroscopesFieldNumber = 3,
+    kAdvancedFieldNumber = 4,
   };
   // repeated .ValueMessage Encoders = 1;
   int encoders_size() const;
@@ -235,6 +236,24 @@ class StatusMessage PROTOBUF_FINAL :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >&
       gyroscopes() const;
 
+  // repeated .ValueMessage Advanced = 4;
+  int advanced_size() const;
+  private:
+  int _internal_advanced_size() const;
+  public:
+  void clear_advanced();
+  ::ValueMessage* mutable_advanced(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >*
+      mutable_advanced();
+  private:
+  const ::ValueMessage& _internal_advanced(int index) const;
+  ::ValueMessage* _internal_add_advanced();
+  public:
+  const ::ValueMessage& advanced(int index) const;
+  ::ValueMessage* add_advanced();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >&
+      advanced() const;
+
   // @@protoc_insertion_point(class_scope:StatusMessage)
  private:
   class _Internal;
@@ -245,6 +264,7 @@ class StatusMessage PROTOBUF_FINAL :
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage > encoders_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage > accelerometers_;
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage > gyroscopes_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage > advanced_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_StatusMessage_2eproto;
 };
@@ -365,6 +385,42 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >&
 StatusMessage::gyroscopes() const {
   // @@protoc_insertion_point(field_list:StatusMessage.Gyroscopes)
   return gyroscopes_;
+}
+
+// repeated .ValueMessage Advanced = 4;
+inline int StatusMessage::_internal_advanced_size() const {
+  return advanced_.size();
+}
+inline int StatusMessage::advanced_size() const {
+  return _internal_advanced_size();
+}
+inline ::ValueMessage* StatusMessage::mutable_advanced(int index) {
+  // @@protoc_insertion_point(field_mutable:StatusMessage.Advanced)
+  return advanced_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >*
+StatusMessage::mutable_advanced() {
+  // @@protoc_insertion_point(field_mutable_list:StatusMessage.Advanced)
+  return &advanced_;
+}
+inline const ::ValueMessage& StatusMessage::_internal_advanced(int index) const {
+  return advanced_.Get(index);
+}
+inline const ::ValueMessage& StatusMessage::advanced(int index) const {
+  // @@protoc_insertion_point(field_get:StatusMessage.Advanced)
+  return _internal_advanced(index);
+}
+inline ::ValueMessage* StatusMessage::_internal_add_advanced() {
+  return advanced_.Add();
+}
+inline ::ValueMessage* StatusMessage::add_advanced() {
+  // @@protoc_insertion_point(field_add:StatusMessage.Advanced)
+  return _internal_add_advanced();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::ValueMessage >&
+StatusMessage::advanced() const {
+  // @@protoc_insertion_point(field_list:StatusMessage.Advanced)
+  return advanced_;
 }
 
 #ifdef __GNUC__
