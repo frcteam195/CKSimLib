@@ -11,6 +11,8 @@ c_GetAccelerometer
 c_SetAccelerometer
 c_GetGyro
 c_SetGyro
+c_GetAdvObj
+c_SetAdvObj
 Java_com_team195_jni_CKSimJNI_GetMotorValue
 Java_com_team195_jni_CKSimJNI_SetMotorValue
 Java_com_team195_jni_CKSimJNI_GetEncoderValue

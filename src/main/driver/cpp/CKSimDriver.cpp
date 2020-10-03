@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <iostream>
 #include <stdlib.h>
+#include <map>
 #include <hal/HAL.h>
 #include <wpi/mutex.h>
 #include <wpi/SafeThread.h>
@@ -103,28 +104,29 @@ namespace ck
         }
     }
 
+    static std::map<int, float> encoderMap;
+    static std::map<int, float> accelMap;
+    static std::map<int, float> gyroMap;
+    static std::map<int, float> advObjMap;
     static wpi::mutex statusMsgMutex;
-    static StatusMessage statusMessage;
-    void StatusMessageInit()
+    void StatusMapsInit()
     {
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         for (int i = 0; i < MAX_NUM_MOTORS; i++)
         {
-            ValueMessage *v = statusMessage.add_encoders();
-            v->set_id(i);
-            v->set_value(0);
+            encoderMap[i] = 0;
         }
         for (int i = 0; i < MAX_NUM_ACCEL; i++)
         {
-            ValueMessage *v = statusMessage.add_accelerometers();
-            v->set_id(i);
-            v->set_value(0);
+            accelMap[i] = 0;
         }
         for (int i = 0; i < MAX_NUM_GYRO; i++)
         {
-            ValueMessage *v = statusMessage.add_gyroscopes();
-            v->set_id(i);
-            v->set_value(0);
+            gyroMap[i] = 0;
+        }
+        for (int i = 0; i < MAX_NUM_ADVOBJ; i++)
+        {
+            advObjMap[i] = 0;
         }
     }
     float GetEncoder(int id)
@@ -132,7 +134,7 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
-            return statusMessage.encoders(id).value();
+            return encoderMap[id];
         }
         return 0;
     }
@@ -141,7 +143,7 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
-            statusMessage.mutable_encoders(id)->set_value(val);
+            encoderMap[id] = val;
         }
     }
     float GetAccelerometer(int id)
@@ -149,7 +151,7 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ACCEL)
         {
-            return statusMessage.accelerometers(id).value();
+            return accelMap[id];
         }
         return 0;
     }
@@ -158,7 +160,7 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ACCEL)
         {
-            statusMessage.mutable_accelerometers(id)->set_value(val);
+            accelMap[id] = val;
         }
     }
     float GetGyro(int id)
@@ -166,7 +168,7 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_GYRO)
         {
-            return statusMessage.gyroscopes(id).value();
+            return gyroMap[id] = 0;
         }
         return 0;
     }
@@ -175,7 +177,24 @@ namespace ck
         std::lock_guard<wpi::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_GYRO)
         {
-            statusMessage.mutable_gyroscopes(id)->set_value(val);
+            gyroMap[id] = val;
+        }
+    }
+    float GetAdvObj(int id)
+    {
+        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        if (id >= 0 && id < MAX_NUM_ADVOBJ)
+        {
+            return advObjMap[id] = 0;
+        }
+        return 0;
+    }
+    void SetAdvObj(int id, float val)
+    {
+        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        if (id >= 0 && id < MAX_NUM_ADVOBJ)
+        {
+            advObjMap[id] = val;
         }
     }
 
@@ -240,7 +259,26 @@ namespace ck
                     if (tmpStatusMessage.ParseFromArray(bufRecvArr, dataSize))
                     {
                         std::unique_lock<wpi::mutex> lock(statusMsgMutex);
-                        statusMessage = tmpStatusMessage;
+                        for (int i = 0; i < tmpStatusMessage.encoders_size)
+                        {
+                            ValueMessage *tmpObj = tmpStatusMessage.encoders(i);
+                            encoderMap[tmpObj->id] = tmpObj->value;
+                        }
+                        for (int i = 0; i < tmpStatusMessage.accelerometers_size)
+                        {
+                            ValueMessage *tmpObj = tmpStatusMessage.accelerometers(i);
+                            accelMap[tmpObj->id] = tmpObj->value;
+                        }
+                        for (int i = 0; i < tmpStatusMessage.gyroscopes_size)
+                        {
+                            ValueMessage *tmpObj = tmpStatusMessage.gyroscopes(i);
+                            gyroMap[tmpObj->id] = tmpObj->value;
+                        }
+                        for (int i = 0; i < tmpStatusMessage.advanced_size)
+                        {
+                            ValueMessage *tmpObj = tmpStatusMessage.advanced(i);
+                            advObjMap[tmpObj->id] = tmpObj->value;
+                        }
                         lock.unlock();
                     }
                 }
@@ -275,7 +313,7 @@ extern "C"
         GOOGLE_PROTOBUF_VERIFY_VERSION;
         std::lock_guard<wpi::mutex> lock(driverMutex);
         ck::ControlMessageInit();
-        ck::StatusMessageInit();
+        ck::StatusMapsInit();
         int initVal = 0;
         if ((initVal = (ck::ZMQSubInit() | ck::ZMQReqInit())) < 0)
         {
@@ -339,5 +377,13 @@ extern "C"
     void c_SetGyro(int id, float val)
     {
         ck::SetGyro(id, val);
+    }
+    float c_GetAdvObj(int id)
+    {
+        return ck::GetAdvObj(id);
+    }
+    void c_SetAdvObj(int id, float val)
+    {
+        ck::SetAdvObj(id, val);
     }
 } //extern "C"
