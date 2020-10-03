@@ -259,25 +259,25 @@ namespace ck
                     if (tmpStatusMessage.ParseFromArray(bufRecvArr, dataSize))
                     {
                         std::unique_lock<wpi::mutex> lock(statusMsgMutex);
-                        for (int i = 0; i < tmpStatusMessage.encoders_size)
+                        for (int i = 0; i < tmpStatusMessage.encoders_size(); i++)
                         {
-                            ValueMessage *tmpObj = tmpStatusMessage.encoders(i);
-                            encoderMap[tmpObj->id] = tmpObj->value;
+                            const ValueMessage *tmpObj = &tmpStatusMessage.encoders(i);
+                            encoderMap[tmpObj->id()] = tmpObj->value();
                         }
-                        for (int i = 0; i < tmpStatusMessage.accelerometers_size)
+                        for (int i = 0; i < tmpStatusMessage.accelerometers_size(); i++)
                         {
-                            ValueMessage *tmpObj = tmpStatusMessage.accelerometers(i);
-                            accelMap[tmpObj->id] = tmpObj->value;
+                            const ValueMessage *tmpObj = &tmpStatusMessage.accelerometers(i);
+                            accelMap[tmpObj->id()] = tmpObj->value();
                         }
-                        for (int i = 0; i < tmpStatusMessage.gyroscopes_size)
+                        for (int i = 0; i < tmpStatusMessage.gyroscopes_size(); i++)
                         {
-                            ValueMessage *tmpObj = tmpStatusMessage.gyroscopes(i);
-                            gyroMap[tmpObj->id] = tmpObj->value;
+                            const ValueMessage *tmpObj = &tmpStatusMessage.gyroscopes(i);
+                            gyroMap[tmpObj->id()] = tmpObj->value();
                         }
-                        for (int i = 0; i < tmpStatusMessage.advanced_size)
+                        for (int i = 0; i < tmpStatusMessage.advanced_size(); i++)
                         {
-                            ValueMessage *tmpObj = tmpStatusMessage.advanced(i);
-                            advObjMap[tmpObj->id] = tmpObj->value;
+                            const ValueMessage *tmpObj = &tmpStatusMessage.advanced(i);
+                            advObjMap[tmpObj->id()] = tmpObj->value();
                         }
                         lock.unlock();
                     }
