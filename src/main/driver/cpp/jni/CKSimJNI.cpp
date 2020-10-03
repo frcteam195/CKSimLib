@@ -87,4 +87,24 @@ extern "C"
     {
         c_SetGyro(id, val);
     }
+
+    /*
+    * Class:     com_team195_jni_CKSimJNI
+    * Method:    GetAdvObjValue
+    * Signature: (I)F
+    */
+    JNIEXPORT jfloat JNICALL Java_com_team195_jni_CKSimJNI_GetAdvObjValue(JNIEnv *, jclass, jint id)
+    {
+        return c_GetAdvObj(id);
+    }
+
+    /*
+    * Class:     com_team195_jni_CKSimJNI
+    * Method:    SetAdvObjValue
+    * Signature: (IF)V
+    */
+    JNIEXPORT void JNICALL Java_com_team195_jni_CKSimJNI_SetAdvObjValue(JNIEnv *, jclass, jint id, jfloat val)
+    {
+        c_SetAdvObj(id, val);
+    }
 } // extern "C"

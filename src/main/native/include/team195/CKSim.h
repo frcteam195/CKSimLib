@@ -12,6 +12,7 @@ namespace team195
         static constexpr int MAX_NUM_MOTORS = 64;
         static constexpr int MAX_NUM_ACCEL = 64;
         static constexpr int MAX_NUM_GYRO = 64;
+        static constexpr int MAX_NUM_ADVOBJ = 64;
         ~CKSim();
 
         bool registerMotor(int id);
@@ -22,6 +23,9 @@ namespace team195
 
         bool registerGyro(int id);
         bool containsGyro(int id);
+
+        bool registerAdvObj(int id);
+        bool containsAdvObj(int id);
 
         float getMotorValue(int id);
         void setMotorValue(int id, float val);
@@ -34,6 +38,9 @@ namespace team195
 
         float getGyroValue(int id);
         void setGyroValue(int id, float val);
+
+        float getAdvObjValue(int id);
+        void setAdvObjValue(int id, float val);
 
     private:
         CKSim();

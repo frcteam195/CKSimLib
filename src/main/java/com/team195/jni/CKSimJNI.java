@@ -16,4 +16,8 @@ public class CKSimJNI extends CKSimJNIWrapper {
     public static native float GetGyroValue(int id);
 
     public static native void SetGyroValue(int id, float val);
+
+    public static native float GetAdvObjValue(int id);
+
+    public static native void SetAdvObjValue(int id, float val);
 }

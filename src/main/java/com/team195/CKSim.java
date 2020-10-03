@@ -10,10 +10,12 @@ public class CKSim {
     public static final int MAX_NUM_MOTORS = 64;
     public static final int MAX_NUM_ACCEL = 64;
     public static final int MAX_NUM_GYRO = 64;
+    public static final int MAX_NUM_ADVOBJ = 64;
 
     private final HashSet<Integer> motorReg;
     private final HashSet<Integer> accelReg;
     private final HashSet<Integer> gyroReg;
+    private final HashSet<Integer> advObjReg;
 
     protected static CKSim getInstance() {
         return mInstance;
@@ -23,6 +25,7 @@ public class CKSim {
         motorReg = new HashSet<>();
         accelReg = new HashSet<>();
         gyroReg = new HashSet<>();
+        advObjReg = new HashSet<>();
     }
 
     public boolean registerMotor(int id) {
@@ -47,6 +50,14 @@ public class CKSim {
 
     public boolean containsGyro(int id) {
         return gyroReg.contains(id);
+    }
+
+    public boolean registerAdvObj(int id) {
+        return advObjReg.add(id);
+    }
+
+    public boolean containsAdvObj(int id) {
+        return advObjReg.contains(id);
     }
 
     public float getMotorValue(int id) {
@@ -79,5 +90,13 @@ public class CKSim {
 
     public void setGyroValue(int id, float val) {
         CKSimJNI.SetGyroValue(id, val);
+    }
+
+    public float getAdvObjValue(int id) {
+        return CKSimJNI.GetAdvObjValue(id);
+    }
+
+    public void setAdvObjValue(int id, float val) {
+        CKSimJNI.SetAdvObjValue(id, val);
     }
 }

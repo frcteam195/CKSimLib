@@ -46,6 +46,16 @@ namespace team195
         return gyroReg.find(id) != gyroReg.end();
     }
 
+    static std::unordered_set<int> advObjReg;
+    bool CKSim::registerAdvObj(int id)
+    {
+        return advObjReg.insert(id).second;
+    }
+    bool CKSim::containsAdvObj(int id)
+    {
+        return advObjReg.find(id) != advObjReg.end();
+    }
+
     float CKSim::getMotorValue(int id)
     {
         return c_GetMotor(id);
@@ -80,5 +90,14 @@ namespace team195
     void CKSim::setGyroValue(int id, float val)
     {
         c_SetGyro(id, val);
+    }
+
+    float CKSim::getAdvObjValue(int id)
+    {
+        return c_GetAdvObj(id);
+    }
+    void CKSim::setAdvObjValue(int id, float val)
+    {
+        c_SetAdvObj(id, val);
     }
 } // namespace team195
