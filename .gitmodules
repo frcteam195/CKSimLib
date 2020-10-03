@@ -1,0 +1,3 @@
+[submodule "external/CKSimProtoSpec"]
+	path = external/CKSimProtoSpec
+	url = https://github.com/frcteam195/CKSimProtoSpec
