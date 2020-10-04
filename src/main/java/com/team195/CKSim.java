@@ -1,6 +1,8 @@
 package com.team195;
 
 import com.team195.jni.CKSimJNI;
+
+import java.nio.charset.Charset;
 import java.util.HashSet;
 
 public class CKSim {
@@ -26,6 +28,10 @@ public class CKSim {
         accelReg = new HashSet<>();
         gyroReg = new HashSet<>();
         advObjReg = new HashSet<>();
+    }
+
+    public void setIP(final String ip) {
+        CKSimJNI.SetIP(ip.getBytes());
     }
 
     public boolean registerMotor(int id) {

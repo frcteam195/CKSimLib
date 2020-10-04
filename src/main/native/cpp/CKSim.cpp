@@ -16,6 +16,11 @@ namespace team195
         c_CKSimDealloc();
     }
 
+    void CKSim::SetIP(std::string ip)
+    {
+        c_CKSimSetIP(ip.c_str());
+    }
+
     static std::unordered_set<int> motorReg;
     bool CKSim::registerMotor(int id)
     {

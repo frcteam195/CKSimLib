@@ -10,6 +10,26 @@ extern "C"
 {
     /*
     * Class:     com_team195_jni_CKSimJNI
+    * Method:    SetIP
+    * Signature: ([B)V
+    */
+    JNIEXPORT void JNICALL Java_com_team195_jni_CKSimJNI_SetIP(JNIEnv *env, jclass, jbyteArray ipArr)
+    {
+        jboolean isCopy;
+        jsize arrLen = env->GetArrayLength(ipArr);
+        jbyte *b = env->GetByteArrayElements(ipArr, &isCopy);
+        char tmpIPArr[64];
+        for (int i = 0; i < (arrLen < 64 ? arrLen : 64); i++)
+        {
+            tmpIPArr[i] = b[i];
+        }
+        env->ReleaseByteArrayElements(ipArr, b, JNI_ABORT);
+        tmpIPArr[arrLen] = 0; //Ensure string for java is null terminated
+        c_CKSimSetIP(tmpIPArr);
+    }
+
+    /*
+    * Class:     com_team195_jni_CKSimJNI
     * Method:    GetMotorValue
     * Signature: (I)F
     */

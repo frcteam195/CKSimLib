@@ -21,6 +21,23 @@
 
 namespace ck
 {
+    static std::string localSetIP;
+    std::string GetIP()
+    {
+        if (localSetIP.empty())
+        {
+            return ZMQ_SERVER_IP_DEFAULT;
+        }
+        else
+        {
+            return localSetIP;
+        }
+    }
+    void SetIP(std::string ip)
+    {
+        localSetIP = ip;
+    }
+
     static void *contextSubscriber;
     static void *subscriberSocket;
     int ZMQSubInit()
@@ -29,7 +46,7 @@ namespace ck
         contextSubscriber = zmq_ctx_new();
         subscriberSocket = zmq_socket(contextSubscriber, ZMQ_SUB);
         int retVal = 0;
-        if ((retVal = zmq_connect(subscriberSocket, BuildConnStr(ZMQ_SERVER_IP, ZMQ_PUBSUB_SERVER_PORT).c_str())) > -1)
+        if ((retVal = zmq_connect(subscriberSocket, BuildConnStr(GetIP(), ZMQ_PUBSUB_SERVER_PORT).c_str())) > -1)
         {
             retVal = zmq_setsockopt(subscriberSocket, ZMQ_SUBSCRIBE, TOPIC.c_str(), TOPIC.length());
             retVal |= zmq_setsockopt(subscriberSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
@@ -45,7 +62,7 @@ namespace ck
         contextRequester = zmq_ctx_new();
         requesterSocket = zmq_socket(contextRequester, ZMQ_REQ);
         int retVal = 0;
-        if ((retVal = zmq_connect(requesterSocket, BuildConnStr(ZMQ_SERVER_IP, ZMQ_REQREP_SERVER_PORT).c_str())) > -1)
+        if ((retVal = zmq_connect(requesterSocket, BuildConnStr(GetIP(), ZMQ_REQREP_SERVER_PORT).c_str())) > -1)
         {
             retVal = zmq_setsockopt(requesterSocket, ZMQ_SNDTIMEO, &socketRecvTimeout, sizeof(int));
             retVal |= zmq_setsockopt(requesterSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
@@ -338,6 +355,15 @@ extern "C"
         m_CommDaemonSend.Join();
         m_CommDaemonRecv.Join();
         ck::CKSimDealloc();
+    }
+
+    void c_CKSimSetIP(const char *ip)
+    {
+        //Fix strings that come in not null terminated (potentially JNI)
+        // char tmpIP[ipStrLen + 1];
+        // std::memcpy(tmpIP, ip, ipStrLen);
+        // tmpIP[ipStrLen] = 0;
+        ck::SetIP(std::string(ip));
     }
 
     int c_ZMQSubRecvTest()

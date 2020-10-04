@@ -2,6 +2,7 @@ JNI_OnLoad
 JNI_OnUnload
 c_CKSimDriver
 c_CKSimDealloc
+c_CKSimSetIP
 c_ZMQSubRecvTest
 c_GetMotor
 c_SetMotor
@@ -13,6 +14,7 @@ c_GetGyro
 c_SetGyro
 c_GetAdvObj
 c_SetAdvObj
+Java_com_team195_jni_CKSimJNI_SetIP
 Java_com_team195_jni_CKSimJNI_GetMotorValue
 Java_com_team195_jni_CKSimJNI_SetMotorValue
 Java_com_team195_jni_CKSimJNI_GetEncoderValue

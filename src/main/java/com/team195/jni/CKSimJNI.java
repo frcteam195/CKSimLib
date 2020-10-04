@@ -1,6 +1,8 @@
 package com.team195.jni;
 
 public class CKSimJNI extends CKSimJNIWrapper {
+    public static native void SetIP(final byte[] ipArr);
+
     public static native float GetMotorValue(int id);
 
     public static native void SetMotorValue(int id, float val);

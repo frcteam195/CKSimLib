@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CKSingleton.h"
+#include <string>
 
 namespace team195
 {
@@ -14,6 +15,8 @@ namespace team195
         static constexpr int MAX_NUM_GYRO = 64;
         static constexpr int MAX_NUM_ADVOBJ = 64;
         ~CKSim();
+
+        void SetIP(std::string ip);
 
         bool registerMotor(int id);
         bool containsMotor(int id);
