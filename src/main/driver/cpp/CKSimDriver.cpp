@@ -91,11 +91,11 @@ namespace ck
         return numBytes;
     }
 
-    static wpi::mutex controlMsgMutex;
+    static std::mutex controlMsgMutex;
     static ControlMessage controlMessage;
     void ControlMessageInit()
     {
-        std::lock_guard<wpi::mutex> lock(controlMsgMutex);
+        std::lock_guard<std::mutex> lock(controlMsgMutex);
         for (int i = 0; i < MAX_NUM_MOTORS; i++)
         {
             ValueMessage *v = controlMessage.add_motors();
@@ -105,7 +105,7 @@ namespace ck
     }
     float GetMotor(int id)
     {
-        std::lock_guard<wpi::mutex> lock(controlMsgMutex);
+        std::lock_guard<std::mutex> lock(controlMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
             return controlMessage.motors(id).value();
@@ -114,7 +114,7 @@ namespace ck
     }
     void SetMotor(int id, float val)
     {
-        std::lock_guard<wpi::mutex> lock(controlMsgMutex);
+        std::lock_guard<std::mutex> lock(controlMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
             controlMessage.mutable_motors(id)->set_value(val);
@@ -125,10 +125,10 @@ namespace ck
     static std::map<int, float> accelMap;
     static std::map<int, float> gyroMap;
     static std::map<int, float> advObjMap;
-    static wpi::mutex statusMsgMutex;
+    static std::mutex statusMsgMutex;
     void StatusMapsInit()
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         for (int i = 0; i < MAX_NUM_MOTORS; i++)
         {
             encoderMap[i] = 0;
@@ -148,7 +148,7 @@ namespace ck
     }
     float GetEncoder(int id)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
             return encoderMap[id];
@@ -157,7 +157,7 @@ namespace ck
     }
     void SetEncoder(int id, float val)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_MOTORS)
         {
             encoderMap[id] = val;
@@ -165,7 +165,7 @@ namespace ck
     }
     float GetAccelerometer(int id)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ACCEL)
         {
             return accelMap[id];
@@ -174,7 +174,7 @@ namespace ck
     }
     void SetAccelerometer(int id, float val)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ACCEL)
         {
             accelMap[id] = val;
@@ -182,7 +182,7 @@ namespace ck
     }
     float GetGyro(int id)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_GYRO)
         {
             return gyroMap[id] = 0;
@@ -191,7 +191,7 @@ namespace ck
     }
     void SetGyro(int id, float val)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_GYRO)
         {
             gyroMap[id] = val;
@@ -199,7 +199,7 @@ namespace ck
     }
     float GetAdvObj(int id)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ADVOBJ)
         {
             return advObjMap[id] = 0;
@@ -208,7 +208,7 @@ namespace ck
     }
     void SetAdvObj(int id, float val)
     {
-        std::lock_guard<wpi::mutex> lock(statusMsgMutex);
+        std::lock_guard<std::mutex> lock(statusMsgMutex);
         if (id >= 0 && id < MAX_NUM_ADVOBJ)
         {
             advObjMap[id] = val;
@@ -236,7 +236,7 @@ namespace ck
             size_t dataSize = 0;
             while (m_active)
             {
-                std::unique_lock<wpi::mutex> lock(controlMsgMutex);
+                std::unique_lock<std::mutex> lock(controlMsgMutex);
                 if (!controlMessage.SerializeToArray(bufSendArr, DATA_BUF_BYTES))
                 {
                     continue;
@@ -275,7 +275,7 @@ namespace ck
                     StatusMessage tmpStatusMessage;
                     if (tmpStatusMessage.ParseFromArray(bufRecvArr, dataSize))
                     {
-                        std::unique_lock<wpi::mutex> lock(statusMsgMutex);
+                        std::unique_lock<std::mutex> lock(statusMsgMutex);
                         for (int i = 0; i < tmpStatusMessage.encoders_size(); i++)
                         {
                             const ValueMessage *tmpObj = &tmpStatusMessage.encoders(i);
@@ -323,12 +323,12 @@ extern "C"
 {
     static wpi::SafeThreadOwner<ck::CommDaemonSend> m_CommDaemonSend;
     static wpi::SafeThreadOwner<ck::CommDaemonRecv> m_CommDaemonRecv;
-    static wpi::mutex driverMutex;
+    static std::mutex driverMutex;
     static uint8_t initializedCommDaemon = 0;
     int c_CKSimDriver()
     {
         GOOGLE_PROTOBUF_VERIFY_VERSION;
-        std::lock_guard<wpi::mutex> lock(driverMutex);
+        std::lock_guard<std::mutex> lock(driverMutex);
         ck::ControlMessageInit();
         ck::StatusMapsInit();
         int initVal = 0;
@@ -349,7 +349,7 @@ extern "C"
 
     void c_CKSimDealloc()
     {
-        std::lock_guard<wpi::mutex> lock(driverMutex);
+        std::lock_guard<std::mutex> lock(driverMutex);
         m_CommDaemonSend.Stop();
         m_CommDaemonRecv.Stop();
         m_CommDaemonSend.Join();
@@ -368,7 +368,7 @@ extern "C"
 
     int c_ZMQSubRecvTest()
     {
-        std::lock_guard<wpi::mutex> lock(driverMutex);
+        std::lock_guard<std::mutex> lock(driverMutex);
         return ck::ZMQSubRecvTest();
     }
 
