@@ -30,7 +30,7 @@ public class CKSim {
         advObjReg = new HashSet<>();
     }
 
-    public void setIP(final String ip) {
+    public static void setIP(final String ip) {
         CKSimJNI.SetIP(ip.getBytes());
     }
 

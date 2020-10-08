@@ -16,7 +16,7 @@ namespace team195
         static constexpr int MAX_NUM_ADVOBJ = 64;
         ~CKSim();
 
-        void SetIP(std::string ip);
+        static void SetIP(std::string ip);
 
         bool registerMotor(int id);
         bool containsMotor(int id);

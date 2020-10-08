@@ -26,6 +26,7 @@ namespace ck
     {
         if (localSetIP.empty())
         {
+            std::cout << "Default IP Used (127.0.0.1)" << std::endl;
             return ZMQ_SERVER_IP_DEFAULT;
         }
         else
@@ -363,6 +364,8 @@ extern "C"
         // char tmpIP[ipStrLen + 1];
         // std::memcpy(tmpIP, ip, ipStrLen);
         // tmpIP[ipStrLen] = 0;
+        std::cout << std::endl
+                  << ip << std::endl;
         ck::SetIP(std::string(ip));
     }
 

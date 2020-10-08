@@ -173,6 +173,15 @@ model {
 
 apply from: 'publish.gradle'
 
+task copyMaven(type:Exec) {
+    logger.lifecycle("Task running!")
+    workingDir './scripts'
+    commandLine 'cd'
+    commandLine 'cmd', '/c', 'publish_out.cmd'
+}
+
+copyMaven.dependsOn tasks.publish
+
 wrapper {
     gradleVersion = '6.0'
 }

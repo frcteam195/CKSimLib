@@ -11,7 +11,6 @@
 namespace ck
 {
     std::string GetIP();
-    void SetIP(std::string ip);
     int ZMQSubInit();
     int ZMQReqInit();
     int ZMQSubRecvTest();
