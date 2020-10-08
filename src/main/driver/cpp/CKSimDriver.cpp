@@ -39,13 +39,13 @@ namespace ck
         localSetIP = ip;
     }
 
-    static void *contextSubscriber;
+    static void *contextZMQ;
     static void *subscriberSocket;
     int ZMQSubInit()
     {
         int socketRecvTimeout = 1000;
-        contextSubscriber = zmq_ctx_new();
-        subscriberSocket = zmq_socket(contextSubscriber, ZMQ_SUB);
+        contextZMQ = zmq_ctx_new();
+        subscriberSocket = zmq_socket(contextZMQ, ZMQ_SUB);
         int retVal = 0;
         if ((retVal = zmq_connect(subscriberSocket, BuildConnStr(GetIP(), ZMQ_PUBSUB_SERVER_PORT).c_str())) > -1)
         {
@@ -55,18 +55,16 @@ namespace ck
         return retVal;
     }
 
-    static void *contextRequester;
     static void *requesterSocket;
     int ZMQReqInit()
     {
         int socketRecvTimeout = 1000;
-        contextRequester = zmq_ctx_new();
-        requesterSocket = zmq_socket(contextRequester, ZMQ_REQ);
+        requesterSocket = zmq_socket(contextZMQ, ZMQ_REQ);
         int retVal = 0;
         if ((retVal = zmq_connect(requesterSocket, BuildConnStr(GetIP(), ZMQ_REQREP_SERVER_PORT).c_str())) > -1)
         {
-            retVal = zmq_setsockopt(requesterSocket, ZMQ_SNDTIMEO, &socketRecvTimeout, sizeof(int));
-            retVal |= zmq_setsockopt(requesterSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
+            //retVal = zmq_setsockopt(requesterSocket, ZMQ_SNDTIMEO, &socketRecvTimeout, sizeof(int));
+            //retVal |= zmq_setsockopt(requesterSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
         }
         return retVal;
     }
@@ -245,12 +243,18 @@ namespace ck
                 dataSize = controlMessage.ByteSizeLong();
                 lock.unlock();
 
-                zmq_send(requesterSocket, bufSendArr, dataSize, ZMQ_NULL);
+                int retVal = zmq_send(requesterSocket, bufSendArr, dataSize, ZMQ_NULL);
+                std::cout << "ZMQSend retval: " << retVal << std::endl;
+                if (retVal < 0)
+                {
+                    std::cout << "ZMQSend Error: " << strerror(errno) << std::endl;
+                }
                 zmq_recv(requesterSocket, bufRecvArr, DATA_BUF_BYTES_SMALL, ZMQ_NULL);
                 currTime = HAL_GetFPGATime(&status);
                 HAL_UpdateNotifierAlarm(m_setNotifier, (uint64_t)(currTime + (kThreadRate - (currTime - startTime))), &status);
                 HAL_WaitForNotifierAlarm(m_setNotifier, &status);
                 startTime = HAL_GetFPGATime(&status);
+                std::cout << "Send Thread Running" << std::endl;
             }
             HAL_StopNotifier(m_setNotifier, &status);
             HAL_CleanNotifier(m_setNotifier, &status);
@@ -307,9 +311,8 @@ namespace ck
     void CKSimDealloc()
     {
         zmq_close(subscriberSocket);
-        zmq_ctx_destroy(contextSubscriber);
         zmq_close(requesterSocket);
-        zmq_ctx_destroy(contextRequester);
+        zmq_ctx_destroy(contextZMQ);
     }
 
     std::string BuildConnStr(std::string ipAddr, std::string port)

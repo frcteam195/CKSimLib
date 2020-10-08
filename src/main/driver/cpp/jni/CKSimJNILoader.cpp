@@ -17,7 +17,10 @@ extern "C"
 
         // In here is also where you store things like class references
         // if they are ever needed
-        c_CKSimDriver();
+        if (c_CKSimDriver() < 0)
+        {
+            return JNI_ERR;
+        }
 
         return JNI_VERSION_1_6;
     }

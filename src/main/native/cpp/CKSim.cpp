@@ -8,7 +8,10 @@ namespace team195
 
     CKSim::CKSim()
     {
-        c_CKSimDriver();
+        if (c_CKSimDriver() < 0)
+        {
+            throw std::exception("CKSim Driver Init failed!");
+        }
     }
 
     CKSim::~CKSim()
