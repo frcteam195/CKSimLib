@@ -13,7 +13,6 @@ namespace ck
     std::string GetIP();
     int ZMQSubInit();
     int ZMQReqInit();
-    int ZMQSubRecvTest();
     void ControlMessageInit();
     float GetMotor(int id);
     void SetMotor(int id, float val);
@@ -35,7 +34,6 @@ extern "C"
     int c_CKSimDriver();
     void c_CKSimDealloc();
     void c_CKSimSetIP(const char *ip);
-    int c_ZMQSubRecvTest();
     float c_GetMotor(int id);
     void c_SetMotor(int id, float val);
     float c_GetEncoder(int id);
