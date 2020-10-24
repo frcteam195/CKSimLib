@@ -77,13 +77,13 @@ namespace ck
         zmq_close(requesterSocket);
         requesterSocket = NULL;
 
-        int socketRecvTimeout = 1000;
+        int socketRecvTimeout = 250;
         requesterSocket = zmq_socket(contextZMQ, ZMQ_REQ);
         int retVal = 0;
         if ((retVal = zmq_connect(requesterSocket, BuildConnStr(GetIP(), ZMQ_REQREP_SERVER_PORT).c_str())) > -1)
         {
             //retVal = zmq_setsockopt(requesterSocket, ZMQ_SNDTIMEO, &socketRecvTimeout, sizeof(int));
-            //retVal |= zmq_setsockopt(requesterSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
+            retVal |= zmq_setsockopt(requesterSocket, ZMQ_RCVTIMEO, &socketRecvTimeout, sizeof(int));
         }
         else
         {
@@ -254,7 +254,7 @@ namespace ck
                     {
                         // std::cout << "ZMQSend Error: " << strerror(errno) << std::endl;
                     }
-                    int retBytes = zmq_recv(requesterSocket, bufRecvArr, DATA_BUF_BYTES_SMALL, ZMQ_NOBLOCK);
+                    int retBytes = zmq_recv(requesterSocket, bufRecvArr, DATA_BUF_BYTES_SMALL, ZMQ_NULL);
                     if (retBytes <= 0)
                     {
                         ++requesterFailCounter %= 10;
