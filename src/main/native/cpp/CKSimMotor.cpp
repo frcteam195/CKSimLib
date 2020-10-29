@@ -1,4 +1,6 @@
 #include "team195/CKSimMotor.h"
+#include "frc/smartdashboard/SendableBuilder.h"
+#include "frc/smartdashboard/SendableRegistry.h"
 
 #include <iostream>
 
@@ -20,6 +22,7 @@ namespace team195
             id = -1;
             return;
         }
+        frc::SendableRegistry::GetInstance().AddLW(this, "CKSimMotor", id);
     }
 
     float CKSimMotor::GetMotorValue()
@@ -40,5 +43,15 @@ namespace team195
     bool CKSimMotor::validateId(int id)
     {
         return (id >= 0 && id < CKSim::MAX_NUM_MOTORS);
+    }
+
+    void CKSimMotor::InitSendable(frc::SendableBuilder &builder)
+    {
+        builder.SetSmartDashboardType("CKSimMotor");
+        // builder.SetActuator(true);
+        // builder.SetSafeState([=]() { SetDisabled(); });
+        builder.AddDoubleProperty(
+            "Value", [=]() { return (double)GetMotorValue(); },
+            [=](double value) { SetMotorValue((float)value); });
     }
 } // namespace team195

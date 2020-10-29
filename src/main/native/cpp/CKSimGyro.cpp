@@ -1,5 +1,6 @@
 #include "team195/CKSimGyro.h"
-
+#include "frc/smartdashboard/SendableBuilder.h"
+#include "frc/smartdashboard/SendableRegistry.h"
 #include <iostream>
 
 #include "team195/CKSim.h"
@@ -29,6 +30,7 @@ namespace team195
                 return;
             }
         }
+        frc::SendableRegistry::GetInstance().AddLW(this, "CKSimGyro", id);
     }
 
     float CKSimGyro::GetValue(int axis)
@@ -47,5 +49,18 @@ namespace team195
     bool CKSimGyro::validateId(int id)
     {
         return (id >= 0 && id < CKSim::MAX_NUM_GYRO);
+    }
+
+    void CKSimGyro::InitSendable(frc::SendableBuilder &builder)
+    {
+        builder.SetSmartDashboardType("CKSimGyro");
+        // builder.SetActuator(true);
+        // builder.SetSafeState([=]() { SetDisabled(); });
+        for (int i = 0; i < numAxes; i++)
+        {
+            const int idx = i;
+            builder.AddDoubleProperty(
+                "Axis " + std::to_string(idx), [=]() { return (double)GetValue(idx); }, [=](double value) { NULL; });
+        }
     }
 } // namespace team195

@@ -1,5 +1,6 @@
 #include "team195/CKSimAdvancedObject.h"
-
+#include "frc/smartdashboard/SendableBuilder.h"
+#include "frc/smartdashboard/SendableRegistry.h"
 #include <iostream>
 
 #include "team195/CKSim.h"
@@ -20,6 +21,7 @@ namespace team195
             id = -1;
             return;
         }
+        frc::SendableRegistry::GetInstance().AddLW(this, "CKSimAdvanced", id);
     }
 
     float CKSimAdvancedObject::GetValue()
@@ -30,5 +32,14 @@ namespace team195
     bool CKSimAdvancedObject::validateId(int id)
     {
         return (id >= 0 && id < CKSim::MAX_NUM_ADVOBJ);
+    }
+
+    void CKSimAdvancedObject::InitSendable(frc::SendableBuilder &builder)
+    {
+        builder.SetSmartDashboardType("CKSimAdvanced");
+        // builder.SetActuator(true);
+        // builder.SetSafeState([=]() { SetDisabled(); });
+        builder.AddDoubleProperty(
+            "Value", [=]() { return (double)GetValue(); }, [=](double value) { NULL; });
     }
 } // namespace team195

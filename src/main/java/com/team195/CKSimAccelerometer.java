@@ -1,6 +1,10 @@
 package com.team195;
 
-public class CKSimAccelerometer {
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+
+public class CKSimAccelerometer implements Sendable {
     private int id;
     private int numAxes;
 
@@ -22,6 +26,7 @@ public class CKSimAccelerometer {
         }
         this.id = id;
         this.numAxes = numAxes;
+        SendableRegistry.addLW(this, "CKSimAccelerometer", id);
     }
 
     public float getValue(int axis) {
@@ -38,4 +43,14 @@ public class CKSimAccelerometer {
         return (id >= 0 && id < CKSim.MAX_NUM_ACCEL);
     }
 
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("CKSimAccelerometer");
+        // builder.setActuator(false);
+        // builder.setSafeState(this::setDisabled);
+        for (int i = 0; i < numAxes; i++) {
+            final int idx = i;
+            builder.addDoubleProperty("Axis " + idx, () -> getValue(idx), null);
+        }
+    }
 }

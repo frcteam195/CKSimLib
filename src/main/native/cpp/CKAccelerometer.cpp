@@ -1,5 +1,6 @@
 #include "team195/CKSimAccelerometer.h"
-
+#include "frc/smartdashboard/SendableBuilder.h"
+#include "frc/smartdashboard/SendableRegistry.h"
 #include <iostream>
 
 #include "team195/CKSim.h"
@@ -29,6 +30,7 @@ namespace team195
                 return;
             }
         }
+        frc::SendableRegistry::GetInstance().AddLW(this, "CKSimAccelerometer", id);
     }
 
     float CKSimAccelerometer::GetValue(int axis)
@@ -47,5 +49,18 @@ namespace team195
     bool CKSimAccelerometer::validateId(int id)
     {
         return (id >= 0 && id < CKSim::MAX_NUM_ACCEL);
+    }
+
+    void CKSimAccelerometer::InitSendable(frc::SendableBuilder &builder)
+    {
+        builder.SetSmartDashboardType("CKSimAccelerometer");
+        // builder.SetActuator(true);
+        // builder.SetSafeState([=]() { SetDisabled(); });
+        for (int i = 0; i < numAxes; i++)
+        {
+            const int idx = i;
+            builder.AddDoubleProperty(
+                "Axis " + std::to_string(idx), [=]() { return (double)GetValue(idx); }, [=](double value) { NULL; });
+        }
     }
 } // namespace team195

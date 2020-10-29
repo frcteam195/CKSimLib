@@ -1,6 +1,10 @@
 package com.team195;
 
-public class CKSimAdvancedObject {
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+
+public class CKSimAdvancedObject implements Sendable {
     private int id;
 
     public CKSimAdvancedObject(int id) {
@@ -13,6 +17,7 @@ public class CKSimAdvancedObject {
             return;
         }
         this.id = id;
+        SendableRegistry.addLW(this, "CKSimAdvanced", id);
     }
 
     public float getValue() {
@@ -21,5 +26,13 @@ public class CKSimAdvancedObject {
 
     private boolean validateId(int id) {
         return (id >= 0 && id < CKSim.MAX_NUM_ADVOBJ);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.setSmartDashboardType("CKSimAdvanced");
+        // builder.setActuator(false);
+        // builder.setSafeState(this::setDisabled);
+        builder.addDoubleProperty("Value", this::getValue, null);
     }
 }
